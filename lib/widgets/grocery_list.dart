@@ -75,10 +75,41 @@ class _GroceryListState extends State<GroceryList> {
     });
   }
 
-  void _removeItem(GroceryItem item) {
+  void _showRemoveErrorToast(BuildContext context) {
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        content: const Text(
+          'Delete failed, please try again later.',
+          style: TextStyle(color: Colors.red),
+        ),
+        action: SnackBarAction(
+          label: 'Dismiss',
+          onPressed: scaffold.hideCurrentMaterialBanner,
+        ),
+      ),
+    );
+  }
+
+  void _removeItem(GroceryItem item, BuildContext context) async {
+    final index = _groceryItems.indexOf(item);
+
     setState(() {
       _groceryItems.remove(item);
     });
+
+    final url = Uri.https(
+        'flutter-udemy-975d8-default-rtdb.asia-southeast1.firebasedatabase.app',
+        'shopping-list/${item.id}.json');
+
+    final response = await http.delete(url);
+
+    if (response.statusCode >= 400) {
+      setState(() {
+        _groceryItems.insert(index, item);
+      });
+      _showRemoveErrorToast(context);
+    }
   }
 
   @override
@@ -98,7 +129,7 @@ class _GroceryListState extends State<GroceryList> {
         itemCount: _groceryItems.length,
         itemBuilder: (ctx, index) => Dismissible(
           onDismissed: (direction) {
-            _removeItem(_groceryItems[index]);
+            _removeItem(_groceryItems[index], context);
           },
           key: ValueKey(_groceryItems[index].id),
           child: ListTile(
