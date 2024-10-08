@@ -167,15 +167,16 @@ class _GroceryListState extends State<GroceryList> {
     }
 
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Your Groceries'),
-          actions: [
-            IconButton(
-              onPressed: _addItem,
-              icon: const Icon(Icons.add),
-            ),
-          ],
-        ),
-        body: content);
+      appBar: AppBar(
+        title: const Text('Your Groceries'),
+        actions: [
+          IconButton(
+            onPressed: _addItem,
+            icon: const Icon(Icons.add),
+          ),
+        ],
+      ),
+      body: content,
+    );
   }
 }
